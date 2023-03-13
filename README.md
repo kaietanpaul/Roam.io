@@ -1,1 +1,2 @@
 # Roam.io
+This web application is designed to help users plan their trips by providing them with weather information, nearby restaurants, recreational activities, and events. The app detects the user's location or allows them to enter a location manually, and then displays relevant information. Additionally, there is a feature that allows users to mark their hotel location, and the app will generate a route from their current location to the hotel.
