@@ -28,12 +28,32 @@
         </tbody>
     </table>
     <script>
-        function initAutocomplete() {
-            var input = document.getElementById('city');
-            var options = { types: ['(cities)'] };
-            var autocomplete = new google.maps.places.Autocomplete(input, options);
-        }
+  function initializeAutocomplete() {
+    const input = document.getElementById('city');
+    const options = {
+      types: ['(cities)']
+    };
+    const autocomplete = new google.maps.places.Autocomplete(input, options);
 
-        google.maps.event.addDomListener(window, 'load', initAutocomplete);
-    </script>
+    autocomplete.addListener('place_changed', function () {
+      const place = autocomplete.getPlace();
+      if (!place.address_components) {
+        return;
+      }
+      let city = '';
+      for (let i = 0; i < place.address_components.length; i++) {
+        const component = place.address_components[i];
+        if (component.types.indexOf('locality') !== -1) {
+          city = component.long_name;
+          break;
+        }
+      }
+      // Zaktualizuj wartość pola wprowadzania tylko wtedy, gdy znaleziono nazwę miasta
+      if (city !== '') {
+        input.value = city;
+      }
+    });
+  }
+  window.addEventListener('load', initializeAutocomplete);
+</script>
 {% endblock %}
