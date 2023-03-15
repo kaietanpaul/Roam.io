@@ -138,3 +138,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 
+OPENWEATHERMAP_API_KEY = '2e0080fc7928d7866d67e90cabaea984'
+
