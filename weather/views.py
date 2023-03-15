@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 
 def weather(request):
-    city_name = 'Zielona Góra'
+    city_name = request.GET.get('city', 'Zielona Góra')
     weather_data = fetch_weather_data(city_name)
 
     city = weather_data['city']['name']
