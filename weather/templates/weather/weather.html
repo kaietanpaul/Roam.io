@@ -1,7 +1,25 @@
-{% extends "base.html" %}
-
-{% block title %}Weather - ROAMIO{% endblock title %}
+{% extends 'base.html' %}
 
 {% block content %}
-    <h1>Weather</h1>
-{% endblock content %}
+    <h1>Weather for {{ city }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Hour</th>
+                <th>Temperature</th>
+                <th>Humidity</th>
+                <th>Pressure</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for forecast in forecast_list %}
+                <tr>
+                    <td>{{ forecast.hour }}</td>
+                    <td>{{ forecast.temperature }}&deg;C</td>
+                    <td>{{ forecast.humidity }}%</td>
+                    <td>{{ forecast.pressure }} hPa</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
