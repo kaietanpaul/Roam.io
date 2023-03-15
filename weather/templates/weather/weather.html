@@ -2,6 +2,11 @@
 
 {% block content %}
     <h1>Weather for {{ city }}</h1>
+    <form method="GET">
+        <label for="city">Enter city name:</label>
+        <input type="text" name="city" id="city" value="{{ city }}">
+        <input type="submit" value="Get Weather">
+    </form>
     <table>
         <thead>
             <tr>
@@ -22,4 +27,13 @@
             {% endfor %}
         </tbody>
     </table>
+    <script>
+        function initAutocomplete() {
+            var input = document.getElementById('city');
+            var options = { types: ['(cities)'] };
+            var autocomplete = new google.maps.places.Autocomplete(input, options);
+        }
+
+        google.maps.event.addDomListener(window, 'load', initAutocomplete);
+    </script>
 {% endblock %}
