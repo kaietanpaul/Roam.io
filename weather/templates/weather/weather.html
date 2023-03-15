@@ -27,33 +27,40 @@
             {% endfor %}
         </tbody>
     </table>
-    <script>
-  function initializeAutocomplete() {
-    const input = document.getElementById('city');
-    const options = {
-      types: ['(cities)']
-    };
-    const autocomplete = new google.maps.places.Autocomplete(input, options);
+<script>
+    function initializeAutocomplete() {
+        const input = document.getElementById('city');
+        const options = {
+            types: ['(cities)']
+        };
+        const autocomplete = new google.maps.places.Autocomplete(input, options);
 
-    autocomplete.addListener('place_changed', function () {
-      const place = autocomplete.getPlace();
-      if (!place.address_components) {
-        return;
-      }
-      let city = '';
-      for (let i = 0; i < place.address_components.length; i++) {
-        const component = place.address_components[i];
-        if (component.types.indexOf('locality') !== -1) {
-          city = component.long_name;
-          break;
-        }
-      }
-      // Zaktualizuj wartość pola wprowadzania tylko wtedy, gdy znaleziono nazwę miasta
-      if (city !== '') {
-        input.value = city;
-      }
-    });
-  }
-  window.addEventListener('load', initializeAutocomplete);
+        autocomplete.addListener('place_changed', function () {
+            const place = autocomplete.getPlace();
+            if (!place.address_components) {
+                return;
+            }
+            let city = '';
+            for (let i = 0; i < place.address_components.length; i++) {
+                const component = place.address_components[i];
+                if (component.types.indexOf('locality') !== -1) {
+                    city = component.long_name;
+                    break;
+                }
+            }
+            if (city !== '') {
+                input.value = city;
+            }
+        });
+
+        input.form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            setTimeout(() => {
+                input.form.submit();
+            }, 300);
+        });
+    }
+    window.addEventListener('load', initializeAutocomplete);
 </script>
 {% endblock %}
