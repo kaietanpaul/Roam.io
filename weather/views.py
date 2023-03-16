@@ -33,10 +33,15 @@ def weather(request):
     else:
         form = FavoriteCitiesForm()
 
+    favorites_count = 0
+    if request.user.is_authenticated:
+        favorites_count = request.user.favorite_cities.count()
+
     context = {
         'city': city,
         'forecast_list': forecast_list,
         'form': form,
+        'favorites_count': favorites_count,
     }
 
     return render(request, 'weather/weather.html', context)

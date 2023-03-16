@@ -2,12 +2,17 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-<h3>Dodaj ulubione miasto</h3>
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <button type="submit">Dodaj miasto</button>
-</form>
+    {% if favorites_count < 3 %}
+        <h3>Add favorite city</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add city</button>
+        </form>
+    {% else %}
+        <h3>Edit favorite cities</h3>
+        <!-- Tutaj możesz dodać opcję edycji ulubionych miast -->
+    {% endif %}
 {% endif %}
 
 <h1>Weather for {{ city }}</h1>
