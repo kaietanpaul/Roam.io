@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from .utils import fetch_weather_data
 from datetime import datetime, timedelta
+from users.forms import FavoriteCitiesForm
+from users.models import User
+from cities.models import City
 
 
 def weather(request):
@@ -20,9 +23,20 @@ def weather(request):
             'pressure': forecast['main']['pressure'],
         })
 
+    if request.method == 'POST' and request.user.is_authenticated:
+        form = FavoriteCitiesForm(request.POST)
+        if form.is_valid():
+            city_name = form.cleaned_data.get('name')
+            city, created = City.objects.get_or_create(name=city_name)
+            request.user.favorite_cities.add(city)
+            request.user.save()
+    else:
+        form = FavoriteCitiesForm()
+
     context = {
         'city': city,
         'forecast_list': forecast_list,
+        'form': form,
     }
 
     return render(request, 'weather/weather.html', context)

@@ -1,32 +1,41 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Weather for {{ city }}</h1>
-    <form method="GET">
-        <label for="city">Enter city name:</label>
-        <input type="text" name="city" id="city" value="{{ city }}">
-        <input type="submit" value="Get Weather">
-    </form>
-    <table>
-        <thead>
-            <tr>
-                <th>Hour</th>
-                <th>Temperature</th>
-                <th>Humidity</th>
-                <th>Pressure</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for forecast in forecast_list %}
-                <tr>
-                    <td>{{ forecast.hour }}</td>
-                    <td>{{ forecast.temperature }}&deg;C</td>
-                    <td>{{ forecast.humidity }}%</td>
-                    <td>{{ forecast.pressure }} hPa</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% if user.is_authenticated %}
+<h3>Dodaj ulubione miasto</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit">Dodaj miasto</button>
+</form>
+{% endif %}
+
+<h1>Weather for {{ city }}</h1>
+<form method="GET">
+    <label for="city">Enter city name:</label>
+    <input type="text" name="city" id="city" value="{{ city }}">
+    <input type="submit" value="Get Weather">
+</form>
+<table>
+    <thead>
+    <tr>
+        <th>Hour</th>
+        <th>Temperature</th>
+        <th>Humidity</th>
+        <th>Pressure</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for forecast in forecast_list %}
+    <tr>
+        <td>{{ forecast.hour }}</td>
+        <td>{{ forecast.temperature }}&deg;C</td>
+        <td>{{ forecast.humidity }}%</td>
+        <td>{{ forecast.pressure }} hPa</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
 <script>
     function initializeAutocomplete() {
         const input = document.getElementById('city');
