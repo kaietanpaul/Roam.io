@@ -33,15 +33,35 @@ def weather(request):
     else:
         form = FavoriteCitiesForm()
 
-    favorites_count = 0
+    favorite_cities = []
+    favorite_cities_data = []
+
     if request.user.is_authenticated:
-        favorites_count = request.user.favorite_cities.count()
+        favorite_cities = request.user.favorite_cities.all()
+        for fav_city in favorite_cities:
+            fav_city_weather_data = fetch_weather_data(fav_city.name)
+            fav_city_forecast_list = []
+
+            for index, forecast in enumerate(fav_city_weather_data['list']):
+                current_time = datetime.now()
+                hour = (current_time + timedelta(hours=index)).strftime('%H:%M')
+                fav_city_forecast_list.append({
+                    'hour': hour,
+                    'temperature': forecast['main']['temp'],
+                    'humidity': forecast['main']['humidity'],
+                    'pressure': forecast['main']['pressure'],
+                })
+            favorite_cities_data.append({
+                'city': fav_city,
+                'list': fav_city_forecast_list
+            })
 
     context = {
         'city': city,
         'forecast_list': forecast_list,
         'form': form,
-        'favorites_count': favorites_count,
+        'favorite_cities': favorite_cities,
+        'favorite_cities_data': favorite_cities_data,
     }
 
     return render(request, 'weather/weather.html', context)
