@@ -2,13 +2,6 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-    <h2>Ulubione miasta</h2>
-    <ul>
-        {% for city in favorite_cities %}
-            <li>{{ city.name }} <button>Edytuj</button></li>
-        {% endfor %}
-    </ul>
-
     {% if favorite_cities.count < 3 %}
         <h3>Dodaj ulubione miasto</h3>
         <form method="post">
@@ -19,7 +12,14 @@
     {% endif %}
 
     {% for fav_city_data in favorite_cities_data %}
-        <h1>Pogoda dla {{ fav_city_data.city.name }}</h1>
+        <h1>{{ fav_city_data.city.name }}</h1>
+        <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="edit">
+            <input type="hidden" name="city_id" value="{{ fav_city_data.city.id }}">
+            <input type="text" name="new_city_name" placeholder="Nowa nazwa miasta">
+            <button type="submit">Edytuj</button>
+        </form>
         <table>
             <thead>
             <tr>

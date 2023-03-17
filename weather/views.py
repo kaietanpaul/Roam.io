@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .utils import fetch_weather_data
 from datetime import datetime, timedelta
 from users.forms import FavoriteCitiesForm
@@ -24,12 +24,22 @@ def weather(request):
         })
 
     if request.method == 'POST' and request.user.is_authenticated:
-        form = FavoriteCitiesForm(request.POST)
-        if form.is_valid():
-            city_name = form.cleaned_data.get('name')
-            city, created = City.objects.get_or_create(name=city_name)
-            request.user.favorite_cities.add(city)
-            request.user.save()
+        action = request.POST.get('action')
+        if action == 'add':
+            form = FavoriteCitiesForm(request.POST)
+            if form.is_valid():
+                city_name = form.cleaned_data.get('name')
+                city, created = City.objects.get_or_create(name=city_name)
+                request.user.favorite_cities.add(city)
+                request.user.save()
+        elif action == 'edit':
+            city_id = request.POST.get('city_id')
+            new_city_name = request.POST.get('new_city_name')
+            if city_id and new_city_name:
+                city = City.objects.get(id=city_id)
+                city.name = new_city_name
+                city.save()
+                return redirect('weather')
     else:
         form = FavoriteCitiesForm()
 
