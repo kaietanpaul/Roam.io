@@ -1,32 +1,74 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Weather for {{ city }}</h1>
-    <form method="GET">
-        <label for="city">Enter city name:</label>
-        <input type="text" name="city" id="city" value="{{ city }}">
-        <input type="submit" value="Get Weather">
-    </form>
-    <table>
-        <thead>
+{% if user.is_authenticated %}
+    <h2>Ulubione miasta</h2>
+    <ul>
+        {% for city in favorite_cities %}
+            <li>{{ city.name }} <button>Edytuj</button></li>
+        {% endfor %}
+    </ul>
+
+    {% if favorite_cities.count < 3 %}
+        <h3>Dodaj ulubione miasto</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Dodaj miasto</button>
+        </form>
+    {% endif %}
+
+    {% for fav_city_data in favorite_cities_data %}
+        <h1>Pogoda dla {{ fav_city_data.city.name }}</h1>
+        <table>
+            <thead>
             <tr>
-                <th>Hour</th>
-                <th>Temperature</th>
-                <th>Humidity</th>
-                <th>Pressure</th>
+                <th>Godzina</th>
+                <th>Temperatura</th>
+                <th>Wilgotność</th>
+                <th>Ciśnienie</th>
             </tr>
-        </thead>
-        <tbody>
-            {% for forecast in forecast_list %}
-                <tr>
-                    <td>{{ forecast.hour }}</td>
-                    <td>{{ forecast.temperature }}&deg;C</td>
-                    <td>{{ forecast.humidity }}%</td>
-                    <td>{{ forecast.pressure }} hPa</td>
-                </tr>
+            </thead>
+            <tbody>
+            {% for forecast in fav_city_data.list %}
+            <tr>
+                <td>{{ forecast.hour }}</td>
+                <td>{{ forecast.temperature }}&deg;C</td>
+                <td>{{ forecast.humidity }}%</td>
+                <td>{{ forecast.pressure }} hPa</td>
+            </tr>
             {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    {% endfor %}
+{% endif %}
+
+<h1>Pogoda dla {{ city }}</h1>
+<form method="GET">
+    <label for="city">Wprowadź nazwę miasta:</label>
+    <input type="text" name="city" id="city" value="{{ city }}">
+    <input type="submit" value="Pokaż pogodę">
+</form>
+<table>
+    <thead>
+    <tr>
+        <th>Godzina</th>
+        <th>Temperatura</th>
+        <th>Wilgotność</th>
+        <th>Ciśnienie</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for forecast in forecast_list %}
+    <tr>
+        <td>{{ forecast.hour }}</td>
+        <td>{{ forecast.temperature }}&deg;C</td>
+        <td>{{ forecast.humidity }}%</td>
+        <td>{{ forecast.pressure }} hPa</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
 <script>
     function initializeAutocomplete() {
         const input = document.getElementById('city');
@@ -58,7 +100,7 @@
 
             setTimeout(() => {
                 input.form.submit();
-            }, 300);
+            }, 400);
         });
     }
     window.addEventListener('load', initializeAutocomplete);
