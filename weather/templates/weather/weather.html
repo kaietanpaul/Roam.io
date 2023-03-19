@@ -5,6 +5,7 @@
     {% if favorite_cities.count < 3 %}
         <h3>Dodaj ulubione miasto</h3>
         <form method="post">
+            <input type="hidden" name="action" value="add">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Dodaj miasto</button>

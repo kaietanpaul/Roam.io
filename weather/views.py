@@ -39,7 +39,7 @@ def weather(request):
                 city = City.objects.get(id=city_id)
                 city.name = new_city_name
                 city.save()
-                return redirect('weather')
+        return redirect('weather')
     else:
         form = FavoriteCitiesForm()
 
