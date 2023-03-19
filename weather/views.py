@@ -39,6 +39,12 @@ def weather(request):
                 city = City.objects.get(id=city_id)
                 city.name = new_city_name
                 city.save()
+        elif action == 'delete':
+            city_id = request.POST.get('city_id')
+            if city_id:
+                city = City.objects.get(id=city_id)
+                request.user.favorite_cities.remove(city)
+                request.user.save()
         return redirect('weather')
     else:
         form = FavoriteCitiesForm()
