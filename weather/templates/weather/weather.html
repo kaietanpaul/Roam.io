@@ -7,7 +7,7 @@
         <form method="post">
             <input type="hidden" name="action" value="add">
             {% csrf_token %}
-            {{ form.as_p }}
+            <input type="text" name="{{ form.name.name }}" id="add_favorite_city" placeholder="Set new city" />
             <button type="submit">Dodaj miasto</button>
         </form>
     {% endif %}
@@ -18,7 +18,7 @@
             {% csrf_token %}
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="city_id" value="{{ fav_city_data.city.id }}">
-            <input type="text" name="new_city_name" placeholder="Nowa nazwa miasta">
+            <input type="text" name="new_city_name" id="edit_favorite_city" placeholder="Edit your city">
             <button type="submit">Edytuj</button>
         </form>
         <table>
@@ -73,36 +73,46 @@
 <script>
     function initializeAutocomplete() {
         const input = document.getElementById('city');
+        const addFavoriteCityInput = document.getElementById('add_favorite_city');
+        const editFavoriteCityInput = document.getElementById('edit_favorite_city');
         const options = {
             types: ['(cities)']
         };
         const autocomplete = new google.maps.places.Autocomplete(input, options);
+        const addFavoriteCityAutocomplete = new google.maps.places.Autocomplete(addFavoriteCityInput, options);
+        const editFavoriteCityAutocomplete = new google.maps.places.Autocomplete(editFavoriteCityInput, options);
 
-        autocomplete.addListener('place_changed', function () {
-            const place = autocomplete.getPlace();
-            if (!place.address_components) {
-                return;
-            }
-            let city = '';
-            for (let i = 0; i < place.address_components.length; i++) {
-                const component = place.address_components[i];
-                if (component.types.indexOf('locality') !== -1) {
-                    city = component.long_name;
-                    break;
+        function setCityValueFromAutocomplete(inputElement, autocompleteInstance) {
+            autocompleteInstance.addListener('place_changed', function () {
+                const place = autocompleteInstance.getPlace();
+                if (!place.address_components) {
+                    return;
                 }
-            }
-            if (city !== '') {
-                input.value = city;
-            }
-        });
+                let city = '';
+                for (let i = 0; i < place.address_components.length; i++) {
+                    const component = place.address_components[i];
+                    if (component.types.indexOf('locality') !== -1) {
+                        city = component.long_name;
+                        break;
+                    }
+                }
+                if (city !== '') {
+                    inputElement.value = city;
+                }
+            });
 
-        input.form.addEventListener('submit', function (event) {
-            event.preventDefault();
+            inputElement.form.addEventListener('submit', function (event) {
+                event.preventDefault();
 
-            setTimeout(() => {
-                input.form.submit();
-            }, 400);
-        });
+                setTimeout(() => {
+                    inputElement.form.submit();
+                }, 400);
+            });
+        }
+
+        setCityValueFromAutocomplete(input, autocomplete);
+        setCityValueFromAutocomplete(addFavoriteCityInput, addFavoriteCityAutocomplete);
+        setCityValueFromAutocomplete(editFavoriteCityInput, editFavoriteCityAutocomplete);
     }
     window.addEventListener('load', initializeAutocomplete);
 </script>
