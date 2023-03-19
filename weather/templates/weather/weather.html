@@ -20,6 +20,7 @@
             <input type="hidden" name="city_id" value="{{ fav_city_data.city.id }}">
             <input type="text" name="new_city_name" id="edit_favorite_city" placeholder="Edit your city">
             <button type="submit">Edytuj</button>
+            <button type="button" class="delete-city" data-city-id="{{ fav_city_data.city.id }}">Usuń</button>
         </form>
         <table>
             <thead>
@@ -116,4 +117,19 @@
     }
     window.addEventListener('load', initializeAutocomplete);
 </script>
+<script>
+    const deleteButtons = document.querySelectorAll('.delete-city');
+    deleteButtons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const form = event.target.closest('form');
+            const actionInput = form.querySelector('input[name="action"]');
+            const cityIdInput = form.querySelector('input[name="city_id"]');
+
+            actionInput.value = 'delete';
+            cityIdInput.value = event.target.dataset.cityId;
+            form.submit();
+        });
+    });
+</script>
+
 {% endblock %}
