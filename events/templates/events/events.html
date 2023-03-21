@@ -1,7 +1,44 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load events_extras %}
 
 {% block title %}Events - ROAMIO{% endblock title %}
 
 {% block content %}
     <h1>Events</h1>
-{% endblock content %}
+    {% if user.is_authenticated %}
+    {% for city, city_events in events.items %}
+    <h2>{{ city.name }}</h2>
+    <form method="post" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="edit">
+        <input type="hidden" name="city_id" value="{{ city.id }}">
+        <input type="text" name="new_city_name" id="edit_favorite_city" placeholder="Edit your city">
+        <button type="submit">Edytuj</button>
+        <button type="button" class="delete-city" data-city-id="{{ city.id }}">Usuń</button>
+    </form>
+    <ul>
+        {% for event in city_events %}
+        <li>
+            <img src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
+            <h3>{{ event.name }}</h3>
+            <p>{{ event.dates.start.localDate }} - {{ event.dates.start.localTime }}</p>
+            <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+    {% endif %}
+    <script>
+        const deleteButtons = document.querySelectorAll('.delete-city');
+        deleteButtons.forEach((button) => {
+            button.addEventListener('click', (event) => {
+                const form = event.target.closest('form');
+                const actionInput = form.querySelector('input[name="action"]');
+                const cityIdInput = form.querySelector('input[name="city_id"]');
+                actionInput.value = 'delete';
+                cityIdInput.value = event.target.dataset.cityId;
+                form.submit();
+            });
+        });
+    </script>
+{% endblock %}
