@@ -28,6 +28,23 @@
     </ul>
     {% endfor %}
     {% endif %}
+     {% if not user.is_authenticated %}
+    <form method="GET">
+        <label for="city">Wprowadź nazwę miasta:</label>
+        <input type="text" name="city" id="city" value="{{ city }}">
+        <input type="submit" value="Pokaż wydarzenia">
+    </form>
+    <ul>
+        {% for event in city_events %}
+        <li>
+            <img src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
+            <h3>{{ event.name }}</h3>
+            <p>{{ event.dates.start.localDate }} - {{ event.dates.start.localTime }}</p>
+            <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <script>
         const deleteButtons = document.querySelectorAll('.delete-city');
         deleteButtons.forEach((button) => {
@@ -41,4 +58,40 @@
             });
         });
     </script>
+<script>
+    function initializeAutocomplete() {
+        const input = document.getElementById('city');
+        const options = {
+            types: ['(cities)']
+        };
+        const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+        autocomplete.addListener('place_changed', function () {
+            const place = autocomplete.getPlace();
+            if (!place.address_components) {
+                return;
+            }
+            let city = '';
+            for (let i = 0; i < place.address_components.length; i++) {
+                const component = place.address_components[i];
+                if (component.types.indexOf('locality') !== -1) {
+                    city = component.long_name;
+                    break;
+                }
+            }
+            if (city !== '') {
+                input.value = city;
+            }
+        });
+
+        input.form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            setTimeout(() => {
+                input.form.submit();
+            }, 400);
+        });
+    }
+    window.addEventListener('load', initializeAutocomplete);
+</script>
 {% endblock %}
