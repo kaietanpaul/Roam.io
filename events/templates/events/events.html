@@ -6,45 +6,54 @@
 {% block content %}
     <h1>Events</h1>
     {% if user.is_authenticated %}
-    {% for city, city_events in events.items %}
-    <h2>{{ city.name }}</h2>
-    <form method="post" style="display:inline;">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="edit">
-        <input type="hidden" name="city_id" value="{{ city.id }}">
-        <input type="text" name="new_city_name" id="edit_favorite_city_{{ city.id }}" class="edit_favorite_city" placeholder="Edit your city">
-        <button type="submit">Edytuj</button>
-        <button type="button" class="delete-city" data-city-id="{{ city.id }}">Usuń</button>
-    </form>
-    <ul>
-        {% for event in city_events %}
-        <li>
-            <img src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
-            <h3>{{ event.name }}</h3>
-            <p>{{ event.dates.start.localDate }} - {{ event.dates.start.localTime }}</p>
-            <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
-        </li>
+        {% for city, city_events in events.items %}
+            <h2>{{ city.name }}</h2>
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" name="city_id" value="{{ city.id }}">
+                <input type="text" name="new_city_name" id="edit_favorite_city_{{ city.id }}" class="edit_favorite_city" placeholder="Edit your city">
+                <button type="submit">Edytuj</button>
+                <button type="button" class="delete-city" data-city-id="{{ city.id }}">Usuń</button>
+            </form>
+            <div class="row">
+                {% for event in city_events %}
+                    <div class="col s12 m6 l4">
+                        <div class="card">
+                            <div class="card-content">
+                                <img class="event-image" src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
+                                <h3>{{ event.name }}</h3>
+                                <p>{{ event.dates.start.localDate }} - {{ event.dates.start.localTime }}</p>
+                                <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         {% endfor %}
-    </ul>
-    {% endfor %}
     {% endif %}
-     {% if not user.is_authenticated %}
-    <form method="GET">
-        <label for="city">Wprowadź nazwę miasta:</label>
-        <input type="text" name="city" id="city" value="{{ city }}">
-        <input type="submit" value="Pokaż wydarzenia">
-    </form>
-    <ul>
-        {% for event in city_events %}
-        <li>
-            <img src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
-            <h3>{{ event.name }}</h3>
-            <p>{{ event.dates.start.localDate }} - {{ event.dates.start.localTime }}</p>
-            <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
-        </li>
-        {% endfor %}
-    </ul>
+    {% if not user.is_authenticated %}
+        <form method="GET">
+            <label for="city">Wprowadź nazwę miasta:</label>
+            <input type="text" name="city" id="city" value="{{ city }}">
+            <input type="submit" value="Pokaż wydarzenia">
+        </form>
+        <div class="row">
+            {% for event in city_events %}
+                <div class="col s12 m6 l4">
+                    <div class="card">
+                        <div class="card-content">
+                            <img class="event-image" src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
+                            <h3>{{ event.name }}</h3>
+                            <p>{{ event.dates.start.localDate }} - {{ event.dates.start.localTime }}</p>
+                            <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
+    </ul>
     <script>
         const deleteButtons = document.querySelectorAll('.delete-city');
         deleteButtons.forEach((button) => {
