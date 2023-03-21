@@ -12,7 +12,7 @@
         {% csrf_token %}
         <input type="hidden" name="action" value="edit">
         <input type="hidden" name="city_id" value="{{ city.id }}">
-        <input type="text" name="new_city_name" id="edit_favorite_city" placeholder="Edit your city">
+        <input type="text" name="new_city_name" id="edit_favorite_city_{{ city.id }}" class="edit_favorite_city" placeholder="Edit your city">
         <button type="submit">Edytuj</button>
         <button type="button" class="delete-city" data-city-id="{{ city.id }}">Usuń</button>
     </form>
@@ -59,39 +59,52 @@
         });
     </script>
 <script>
-    function initializeAutocomplete() {
-        const input = document.getElementById('city');
-        const options = {
-            types: ['(cities)']
-        };
-        const autocomplete = new google.maps.places.Autocomplete(input, options);
+    function initializeAutocomplete(input) {
+    const options = {
+        types: ['(cities)'],
+    };
 
-        autocomplete.addListener('place_changed', function () {
-            const place = autocomplete.getPlace();
-            if (!place.address_components) {
-                return;
-            }
-            let city = '';
-            for (let i = 0; i < place.address_components.length; i++) {
-                const component = place.address_components[i];
-                if (component.types.indexOf('locality') !== -1) {
-                    city = component.long_name;
-                    break;
-                }
-            }
-            if (city !== '') {
-                input.value = city;
-            }
-        });
+    const autocomplete = new google.maps.places.Autocomplete(input, options);
 
-        input.form.addEventListener('submit', function (event) {
-            event.preventDefault();
+    autocomplete.addListener('place_changed', function () {
+        const place = autocomplete.getPlace();
+        if (!place.address_components) {
+            return;
+        }
 
-            setTimeout(() => {
-                input.form.submit();
-            }, 400);
-        });
+        let city = '';
+        for (let i = 0; i < place.address_components.length; i++) {
+            const component = place.address_components[i];
+            if (component.types.indexOf('locality') !== -1) {
+                city = component.long_name;
+                break;
+            }
+        }
+
+        if (city !== '') {
+            input.value = city;
+        }
+    });
+
+    input.form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        setTimeout(() => {
+            input.form.submit();
+        }, 400);
+    });
+}
+
+window.addEventListener('load', function () {
+    const cityInput = document.getElementById('city');
+    if (cityInput) {
+        initializeAutocomplete(cityInput);
     }
-    window.addEventListener('load', initializeAutocomplete);
+
+    const editFavoriteCityInputs = document.querySelectorAll('.edit_favorite_city');
+    editFavoriteCityInputs.forEach((input) => {
+        initializeAutocomplete(input);
+    });
+});
 </script>
 {% endblock %}
