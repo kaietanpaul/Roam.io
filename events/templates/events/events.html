@@ -13,17 +13,21 @@
                 <input type="hidden" name="action" value="edit">
                 <input type="hidden" name="city_id" value="{{ city.id }}">
                 <input type="text" name="new_city_name" id="edit_favorite_city_{{ city.id }}" class="edit_favorite_city" placeholder="Edit your city">
-                <button type="submit">Edytuj</button>
-                <button type="button" class="delete-city" data-city-id="{{ city.id }}">Usuń</button>
+                <button type="submit" class="btn">Edytuj</button>
+                <button type="button" class="delete-city btn red" data-city-id="{{ city.id }}">Usuń</button>
             </form>
             <div class="row">
                 {% for event in city_events %}
                     <div class="col s12 m6 l4">
-                        <div class="card">
+                        <div class="card" style="position: relative;">
                             <div class="card-content">
                                 <img class="event-image" src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
-                                <h3>{{ event.name }}</h3>
-                                <p>{{ event.dates.start.localDate }} - {{ event.dates.start.localTime }}</p>
+                                <h3 class="event-name">{{ event.name }}</h3>
+                            </div>
+                            <div class="card-details">
+                                {% with event.dates.start.localTime|slice:"0:5" as formatted_time %}
+                                    <p>{{ event.dates.start.localDate }} - {{ formatted_time }}</p>
+                                {% endwith %}
                                 <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
                             </div>
                         </div>
