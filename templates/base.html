@@ -5,25 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdSUmurIerwZFu7EMIFChvcsVW2rHqm-8&libraries=places"></script>
     <title>{% block title %}ROAMIO{% endblock title %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        html {
+            height: 100%;
+        }
+        body {
+            color: #343A40;
+            min-height: 100%;
+            background: linear-gradient(to bottom, #ffffff, #e8eaf6) fixed;
+        }
+        .nav-wrapper {
+            background: linear-gradient(to right, #42a5f5, #4527a0);
+        }
+        .btn {
+            background-color: #FFA500;
+        }
+        /* ---------------- */
+
+        .card {
+            max-width: 400px;
+            min-height: 500px;
+        }
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .event-name {
+            font-size: 31px;
+        }
+        .card-details {
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+        }
+        .brand-logo {
+        margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
     <header>
-    </header>
-    <nav>
-        <ul>
+        <nav>
+            <div class="nav-wrapper deep-purple accent-2">
+                <a href="{% url 'home' %}" class="brand-logo pulse">Roam.io</a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'weather' %}">Weather</a></li>
+                    <li><a href="{% url 'events' %}">Events</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'profile' %}">Profile</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                        <li><a href="{% url 'register' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+                <a href="#" data-target="mobile-menu" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            </div>
+        </nav>
+        <ul class="sidenav" id="mobile-menu">
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'weather' %}">Weather</a></li>
             <li><a href="{% url 'events' %}">Events</a></li>
             {% if user.is_authenticated %}
-                <li><a href="{% url 'logout' %}">Logout</a></li>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
             {% else %}
-                <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'register' %}">Register</a></li>
             {% endif %}
         </ul>
-    </nav>
+    </header>
     <main>
-        {% block content %}
-        {% endblock content %}
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
     </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.sidenav');
+            var instances = M.Sidenav.init(elems);
+        });
+    </script>
 </body>
 </html>

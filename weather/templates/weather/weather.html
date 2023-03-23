@@ -2,75 +2,96 @@
 
 {% block content %}
 {% if user.is_authenticated %}
+<div class="row">
     {% if favorite_cities.count < 3 %}
-        <h3>Dodaj ulubione miasto</h3>
-        <form method="post">
-            <input type="hidden" name="action" value="add">
-            {% csrf_token %}
-            <input type="text" name="{{ form.name.name }}" id="add_favorite_city" placeholder="Set new city" />
-            <button type="submit">Dodaj miasto</button>
-        </form>
+    <div class="col s12 m6 l4">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Dodaj ulubione miasto</span>
+                <form method="post">
+                    <input type="hidden" name="action" value="add">
+                    {% csrf_token %}
+                    <input type="text" name="{{ form.name.name }}" id="add_favorite_city" placeholder="Set new city" />
+                    <button type="submit" class="btn">Dodaj miasto</button>
+                </form>
+            </div>
+        </div>
+    </div>
     {% endif %}
 
     {% for fav_city_data in favorite_cities_data %}
-        <h1>{{ fav_city_data.city.name }}</h1>
-        <form method="post" style="display:inline;">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="edit">
-            <input type="hidden" name="city_id" value="{{ fav_city_data.city.id }}">
-            <input type="text" name="new_city_name" id="edit_favorite_city" placeholder="Edit your city">
-            <button type="submit">Edytuj</button>
-            <button type="button" class="delete-city" data-city-id="{{ fav_city_data.city.id }}">Usuń</button>
-        </form>
-        <table>
-            <thead>
-            <tr>
-                <th>Godzina</th>
-                <th>Temperatura</th>
-                <th>Wilgotność</th>
-                <th>Ciśnienie</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for forecast in fav_city_data.list %}
-            <tr>
-                <td>{{ forecast.hour }}</td>
-                <td>{{ forecast.temperature }}&deg;C</td>
-                <td>{{ forecast.humidity }}%</td>
-                <td>{{ forecast.pressure }} hPa</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="col s12 m6 l4">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">{{ fav_city_data.city.name }}</span>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="city_id" value="{{ fav_city_data.city.id }}">
+                    <input type="text" name="new_city_name" id="edit_favorite_city" placeholder="Edit your city">
+                    <button type="submit" class="btn">Edytuj</button>
+                    <button type="button" class="delete-city btn red" data-city-id="{{ fav_city_data.city.id }}">Usuń</button>
+                </form>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Godzina</th>
+                        <th>Temperatura</th>
+                        <th>Wilgotność</th>
+                        <th>Ciśnienie</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for forecast in fav_city_data.list %}
+                    <tr>
+                        <td>{{ forecast.hour }}</td>
+                        <td>{{ forecast.temperature }}&deg;C</td>
+                        <td>{{ forecast.humidity }}%</td>
+                        <td>{{ forecast.pressure }} hPa</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     {% endfor %}
+</div>
 {% endif %}
 
-<h1>Pogoda dla {{ city }}</h1>
-<form method="GET">
-    <label for="city">Wprowadź nazwę miasta:</label>
-    <input type="text" name="city" id="city" value="{{ city }}">
-    <input type="submit" value="Pokaż pogodę">
-</form>
-<table>
-    <thead>
-    <tr>
-        <th>Godzina</th>
-        <th>Temperatura</th>
-        <th>Wilgotność</th>
-        <th>Ciśnienie</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for forecast in forecast_list %}
-    <tr>
-        <td>{{ forecast.hour }}</td>
-        <td>{{ forecast.temperature }}&deg;C</td>
-        <td>{{ forecast.humidity }}%</td>
-        <td>{{ forecast.pressure }} hPa</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+    <div class="col s12 m6 l4">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Pogoda dla {{ city }}</span>
+                <form method="GET">
+                    <label for="city">Wprowadź nazwę miasta:</label>
+                    <input type="text" name="city" id="city" value="{{ city }}">
+                    <input type="submit" value="Pokaż pogodę" class="btn">
+                </form>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Godzina</th>
+                        <th>Temperatura</th>
+                        <th>Wilgotność</th>
+                        <th>Ciśnienie</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for forecast in forecast_list %}
+                    <tr>
+                        <td>{{ forecast.hour }}</td>
+                        <td>{{ forecast.temperature }}&deg;C</td>
+                        <td>{{ forecast.humidity }}%</td>
+                        <td>{{ forecast.pressure }} hPa</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     function initializeAutocomplete() {
         const input = document.getElementById('city');

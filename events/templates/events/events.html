@@ -6,28 +6,58 @@
 {% block content %}
     <h1>Events</h1>
     {% if user.is_authenticated %}
-    {% for city, city_events in events.items %}
-    <h2>{{ city.name }}</h2>
-    <form method="post" style="display:inline;">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="edit">
-        <input type="hidden" name="city_id" value="{{ city.id }}">
-        <input type="text" name="new_city_name" id="edit_favorite_city" placeholder="Edit your city">
-        <button type="submit">Edytuj</button>
-        <button type="button" class="delete-city" data-city-id="{{ city.id }}">Usuń</button>
-    </form>
-    <ul>
-        {% for event in city_events %}
-        <li>
-            <img src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
-            <h3>{{ event.name }}</h3>
-            <p>{{ event.dates.start.localDate }} - {{ event.dates.start.localTime }}</p>
-            <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
-        </li>
+        {% for city, city_events in events.items %}
+            <h2>{{ city.name }}</h2>
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" name="city_id" value="{{ city.id }}">
+                <input type="text" name="new_city_name" id="edit_favorite_city_{{ city.id }}" class="edit_favorite_city" placeholder="Edit your city">
+                <button type="submit" class="btn">Edytuj</button>
+                <button type="button" class="delete-city btn red" data-city-id="{{ city.id }}">Usuń</button>
+            </form>
+            <div class="row">
+                {% for event in city_events %}
+                    <div class="col s12 m6 l4">
+                        <div class="card" style="position: relative;">
+                            <div class="card-content">
+                                <img class="event-image" src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
+                                <h3 class="event-name">{{ event.name }}</h3>
+                            </div>
+                            <div class="card-details">
+                                {% with event.dates.start.localTime|slice:"0:5" as formatted_time %}
+                                    <p>{{ event.dates.start.localDate }} - {{ formatted_time }}</p>
+                                {% endwith %}
+                                <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         {% endfor %}
-    </ul>
-    {% endfor %}
     {% endif %}
+    {% if not user.is_authenticated %}
+        <form method="GET">
+            <label for="city">Wprowadź nazwę miasta:</label>
+            <input type="text" name="city" id="city" value="{{ city }}">
+            <input type="submit" value="Pokaż wydarzenia">
+        </form>
+        <div class="row">
+            {% for event in city_events %}
+                <div class="col s12 m6 l4">
+                    <div class="card">
+                        <div class="card-content">
+                            <img class="event-image" src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
+                            <h3>{{ event.name }}</h3>
+                            <p>{{ event.dates.start.localDate }} - {{ event.dates.start.localTime }}</p>
+                            <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    </ul>
     <script>
         const deleteButtons = document.querySelectorAll('.delete-city');
         deleteButtons.forEach((button) => {
@@ -41,4 +71,53 @@
             });
         });
     </script>
+<script>
+    function initializeAutocomplete(input) {
+    const options = {
+        types: ['(cities)'],
+    };
+
+    const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+    autocomplete.addListener('place_changed', function () {
+        const place = autocomplete.getPlace();
+        if (!place.address_components) {
+            return;
+        }
+
+        let city = '';
+        for (let i = 0; i < place.address_components.length; i++) {
+            const component = place.address_components[i];
+            if (component.types.indexOf('locality') !== -1) {
+                city = component.long_name;
+                break;
+            }
+        }
+
+        if (city !== '') {
+            input.value = city;
+        }
+    });
+
+    input.form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        setTimeout(() => {
+            input.form.submit();
+        }, 400);
+    });
+}
+
+window.addEventListener('load', function () {
+    const cityInput = document.getElementById('city');
+    if (cityInput) {
+        initializeAutocomplete(cityInput);
+    }
+
+    const editFavoriteCityInputs = document.querySelectorAll('.edit_favorite_city');
+    editFavoriteCityInputs.forEach((input) => {
+        initializeAutocomplete(input);
+    });
+});
+</script>
 {% endblock %}
