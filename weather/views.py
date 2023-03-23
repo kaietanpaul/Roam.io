@@ -6,6 +6,8 @@ from users.models import User
 from cities.models import City
 
 
+# Displays weather data for a specified city, allows adding, editing, and
+# deleting favorite cities for authenticated users
 def weather(request):
     city_name = request.GET.get('city', 'Zielona Góra')
     weather_data = fetch_weather_data(city_name)

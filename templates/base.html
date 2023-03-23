@@ -22,8 +22,6 @@
         .btn {
             background-color: #FFA500;
         }
-        /* ---------------- */
-
         .card {
             max-width: 400px;
             min-height: 500px;
@@ -85,7 +83,7 @@
         </div>
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
+    <script> // Initialize Materialize side navigation menu on DOMContentLoaded event
         document.addEventListener('DOMContentLoaded', function() {
             var elems = document.querySelectorAll('.sidenav');
             var instances = M.Sidenav.init(elems);

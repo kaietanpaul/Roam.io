@@ -3,6 +3,7 @@ import requests
 API_ENDPOINT = 'https://app.ticketmaster.com/discovery/v2/events.json'
 
 
+# Function to search for events in a given city, with an optional keyword, and a limit on the number of results returned
 def search_events(city, keyword=None, limit=3):
     params = {
         'apikey': '7otU1YLIy2o8tctOhbTgOiJgphKUNGHK',

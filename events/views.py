@@ -4,6 +4,8 @@ from users.forms import FavoriteCitiesForm
 from cities.models import City
 
 
+# View function handling event search and display for authenticated users with favorite cities
+# and unauthenticated users with a provided city name
 def events(request):
     city_name = request.GET.get('city', None)
 
