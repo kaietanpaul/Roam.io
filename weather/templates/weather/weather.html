@@ -7,12 +7,12 @@
     <div class="col s12 m6 l4">
         <div class="card">
             <div class="card-content">
-                <span class="card-title">Dodaj ulubione miasto</span>
+                <span class="card-title">Add favourite city</span>
                 <form method="post">
                     <input type="hidden" name="action" value="add">
                     {% csrf_token %}
                     <input type="text" name="{{ form.name.name }}" id="add_favorite_city" placeholder="Set new city" />
-                    <button type="submit" class="btn">Dodaj miasto</button>
+                    <button type="submit" class="btn">Add city</button>
                 </form>
             </div>
         </div>
@@ -29,16 +29,16 @@
                     <input type="hidden" name="action" value="edit">
                     <input type="hidden" name="city_id" value="{{ fav_city_data.city.id }}">
                     <input type="text" name="new_city_name" id="edit_favorite_city" placeholder="Edit your city">
-                    <button type="submit" class="btn">Edytuj</button>
-                    <button type="button" class="delete-city btn red" data-city-id="{{ fav_city_data.city.id }}">Usuń</button>
+                    <button type="submit" class="btn">Edit</button>
+                    <button type="button" class="delete-city btn red" data-city-id="{{ fav_city_data.city.id }}">Remove</button>
                 </form>
                 <table>
                     <thead>
                     <tr>
-                        <th>Godzina</th>
-                        <th>Temperatura</th>
-                        <th>Wilgotność</th>
-                        <th>Ciśnienie</th>
+                        <th>Hour</th>
+                        <th>Temperature</th>
+                        <th>Humidity</th>
+                        <th>Pressure</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -62,19 +62,19 @@
     <div class="col s12 m6 l4">
         <div class="card">
             <div class="card-content">
-                <span class="card-title">Pogoda dla {{ city }}</span>
+                <span class="card-title">Weather for {{ city }}</span>
                 <form method="GET">
-                    <label for="city">Wprowadź nazwę miasta:</label>
+                    <label for="city">Enter city name:</label>
                     <input type="text" name="city" id="city" value="{{ city }}">
-                    <input type="submit" value="Pokaż pogodę" class="btn">
+                    <input type="submit" value="Show forecast" class="btn">
                 </form>
                 <table>
                     <thead>
                     <tr>
-                        <th>Godzina</th>
-                        <th>Temperatura</th>
-                        <th>Wilgotność</th>
-                        <th>Ciśnienie</th>
+                        <th>Hour</th>
+                        <th>Temperature</th>
+                        <th>Humidity</th>
+                        <th>Pressure</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -92,7 +92,7 @@
         </div>
     </div>
 </div>
-<script>
+<script> // Initializes Google Places Autocomplete for city input fields and sets the city value based on the user's selection
     function initializeAutocomplete() {
         const input = document.getElementById('city');
         const addFavoriteCityInput = document.getElementById('add_favorite_city');
@@ -138,7 +138,7 @@
     }
     window.addEventListener('load', initializeAutocomplete);
 </script>
-<script>
+<script> // Adds click event listeners to delete buttons for removing favorite cities
     const deleteButtons = document.querySelectorAll('.delete-city');
     deleteButtons.forEach((button) => {
         button.addEventListener('click', (event) => {

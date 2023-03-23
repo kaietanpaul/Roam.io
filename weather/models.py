@@ -1,6 +1,7 @@
 from django.db import models
 
 
+# Represents a weather object containing location and datetime information
 class Weather(models.Model):
     location = models.CharField(max_length=255)
     datetime = models.DateTimeField()
@@ -9,6 +10,7 @@ class Weather(models.Model):
         return self.location
 
 
+# Represents an hourly weather object, temperature, humidity, pressure, and hour, associated with a Weather instance
 class WeatherHour(models.Model):
     weather = models.ForeignKey(Weather, on_delete=models.CASCADE, related_name='hours')
     temperature = models.FloatField()

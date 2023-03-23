@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from .forms import RegisterForm
 
 
+# Handles user registration, saves the new user, and redirects to the login page
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -16,6 +17,7 @@ def register(request):
     return render(request, 'users/register.html', {'form': form})
 
 
+# Renders the user's profile page, requires user to be logged in
 @login_required
 def profile(request):
     return render(request, 'users/profile.html')
