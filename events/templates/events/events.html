@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load events_extras %}
+
+{% block title %}Events - ROAMIO{% endblock title %}
+
+{% block content %}
+    <h1>Events</h1>
+    {% if user.is_authenticated %}
+        {% for city, city_events in events.items %}
+            <h2>{{ city.name }}</h2>
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" name="city_id" value="{{ city.id }}">
+                <input type="text" name="new_city_name" id="edit_favorite_city_{{ city.id }}" class="edit_favorite_city" placeholder="Edit your city">
+                <button type="submit" class="btn">Edit</button>
+                <button type="button" class="delete-city btn red" data-city-id="{{ city.id }}">Remove</button>
+            </form>
+            <div class="row">
+                {% for event in city_events %}
+                    <div class="col s12 m6 l4">
+                        <div class="card" style="position: relative;">
+                            <div class="card-content">
+                                <img class="event-image" src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
+                                <h3 class="event-name">{{ event.name }}</h3>
+                            </div>
+                            <div class="card-details">
+                                {% with event.dates.start.localTime|slice:"0:5" as formatted_time %}
+                                    <p>{{ event.dates.start.localDate }} - {{ formatted_time }}</p>
+                                {% endwith %}
+                                <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if not user.is_authenticated %}
+        <form method="GET">
+            <label for="city">Enter city name:</label>
+            <input type="text" name="city" id="city" value="{{ city }}">
+            <input type="submit" value="Show events">
+        </form>
+        <div class="row">
+            {% for event in city_events %}
+                <div class="col s12 m6 l4">
+                        <div class="card" style="position: relative;">
+                            <div class="card-content">
+                                <img class="event-image" src="{{ event|get_item:'images'|first|get_item:'url' }}" alt="Event image">
+                                <h3 class="event-name">{{ event.name }}</h3>
+                            </div>
+                            <div class="card-details">
+                                {% with event.dates.start.localTime|slice:"0:5" as formatted_time %}
+                                    <p>{{ event.dates.start.localDate }} - {{ formatted_time }}</p>
+                                {% endwith %}
+                                <p>{{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'name' }}, {{ event|get_item:'_embedded'|get_item:'venues'|first|get_item:'city'|get_item:'name' }}</p>
+                            </div>
+                        </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    </ul>
+    <!--
+    This script handles the deletion of favorite cities by attaching event listeners to the delete buttons.
+    When a delete button is clicked, the associated form is submitted with the 'delete' action and the city ID.
+    -->
+    <script>
+        const deleteButtons = document.querySelectorAll('.delete-city');
+        deleteButtons.forEach((button) => {
+            button.addEventListener('click', (event) => {
+                const form = event.target.closest('form');
+                const actionInput = form.querySelector('input[name="action"]');
+                const cityIdInput = form.querySelector('input[name="city_id"]');
+                actionInput.value = 'delete';
+                cityIdInput.value = event.target.dataset.cityId;
+                form.submit();
+            });
+        });
+    </script>
+<!--
+This script initializes the Google Maps Places Autocomplete functionality for city input fields.
+It sets the input type to cities and adds an event listener for the 'place_changed' event.
+When a new city is selected, the input field value is updated with the city's name.
+-->
+<script>
+    function initializeAutocomplete(input) {
+    const options = {
+        types: ['(cities)'],
+    };
+
+    const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+    autocomplete.addListener('place_changed', function () {
+        const place = autocomplete.getPlace();
+        if (!place.address_components) {
+            return;
+        }
+
+        let city = '';
+        for (let i = 0; i < place.address_components.length; i++) {
+            const component = place.address_components[i];
+            if (component.types.indexOf('locality') !== -1) {
+                city = component.long_name;
+                break;
+            }
+        }
+
+        if (city !== '') {
+            input.value = city;
+        }
+    });
+
+    input.form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        setTimeout(() => {
+            input.form.submit();
+        }, 400);
+    });
+}
+
+window.addEventListener('load', function () {
+    const cityInput = document.getElementById('city');
+    if (cityInput) {
+        initializeAutocomplete(cityInput);
+    }
+
+    const editFavoriteCityInputs = document.querySelectorAll('.edit_favorite_city');
+    editFavoriteCityInputs.forEach((input) => {
+        initializeAutocomplete(input);
+    });
+});
+</script>
+{% endblock %}
