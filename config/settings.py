@@ -146,3 +146,5 @@ OPENWEATHERMAP_API_KEY = '2e0080fc7928d7866d67e90cabaea984'
 AUTH_USER_MODEL = 'users.User'
 
 CSRF_TRUSTED_ORIGINS = ('https://roamio.herokuapp.com', )
+
+import django_on_heroku
