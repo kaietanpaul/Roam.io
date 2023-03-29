@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-g)zn=u-v7)kspq=2o=5x=4@_(l#38b#1__1c4*06qta#&e0wya
 DEBUG = False
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-ALLOWED_HOSTS = ['roamio.herokuapp.com', 'https://roamio.herokuapp.com/']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'roamio.herokuapp.com', 'https://roamio.herokuapp.com/']
 INTERNAL_IPS = ALLOWED_HOSTS
 
 
