@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-g)zn=u-v7)kspq=2o=5x=4@_(l#38b#1__1c4*06qta#&e0wya
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+ALLOWED_HOSTS = ['roamio.herokuapp.com', 'https://roamio.herokuapp.com/']
 INTERNAL_IPS = ALLOWED_HOSTS
 
 
@@ -82,12 +83,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'roamio_db',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -131,6 +128,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_FINDER = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder'
+]
 
 
 # Default primary key field type
@@ -143,3 +144,5 @@ LOGIN_REDIRECT_URL = '/'
 OPENWEATHERMAP_API_KEY = '2e0080fc7928d7866d67e90cabaea984'
 
 AUTH_USER_MODEL = 'users.User'
+
+CSRF_TRUSTED_ORIGINS = ('https://roamio.herokuapp.com', )

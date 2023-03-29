@@ -21,7 +21,7 @@ Install the required dependencies:
 
 pip install -r requirements.txt
 
-Set up the PostgreSQL database in settings.py:
+Set up the PostgreSQL or sqlite3 database in settings.py:
 
 DATABASES = {
     'default': {
@@ -31,6 +31,14 @@ DATABASES = {
         'PASSWORD': 'your_db_password',
         'HOST': 'localhost',
         'PORT': '5432',
+    }
+}
+or
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
